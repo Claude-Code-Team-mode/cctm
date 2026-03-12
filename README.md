@@ -31,7 +31,7 @@ This copies team skills and commands into your project's `.claude/` directory.
 In Claude Code:
 
 ```
-/cctm:create frontend Build a user settings page with profile editing
+/cctm:create
 ```
 
 ### 3. Track progress
