@@ -17,37 +17,19 @@ Create a team. The current main session becomes the **team leader** — no separ
 
 ## Team Agents
 
-All agent definitions are located at:
-
-```
-.claude/skills/cctm-create-team/team-agents/
-```
+Agent definitions at `.claude/skills/cctm-create-team/team-agents/`:
 
 | Agent | File |
 |-------|------|
-| `leader` | `.claude/skills/cctm-create-team/team-agents/leader.md` / `leader.ZH-CN.md` |
-| `requirements_analyst` | `.claude/skills/cctm-create-team/team-agents/requirements_analyst.md` / `requirements_analyst.ZH-CN.md` |
-| `architect` | `.claude/skills/cctm-create-team/team-agents/architect.md` / `architect.ZH-CN.md` |
-| `engineer` | `.claude/skills/cctm-create-team/team-agents/engineer.md` / `engineer.ZH-CN.md` |
-
-## Workflow
-
-```
-1. main session becomes leader (no agent spawn)
-   -> First runs /cctm:resume to check for unfinished projects
-   -> Waits for user to provide requirements
-   -> Dispatches tasks to corresponding roles
-```
-
-Leader spawns other members on demand:
-- Requirements related -> spawn `requirements_analyst`
-- Technical related -> spawn `architect`
-- Development related -> spawn `engineer` (can run multiple in parallel)
+| `leader` | `leader.md` / `leader.ZH-CN.md` |
+| `requirements_analyst` | `requirements_analyst.md` / `requirements_analyst.ZH-CN.md` |
+| `architect` | `architect.md` / `architect.ZH-CN.md` |
+| `engineer` | `engineer.md` / `engineer.ZH-CN.md` |
 
 ## Startup Procedure
 
-1. Read the leader agent file at `.claude/skills/cctm-create-team/team-agents/leader.md`
-2. **Internalize ALL rules** in the leader agent file — these are your permanent operating rules for this entire session. You must follow them strictly, no exceptions.
-3. Spawn `requirements_analyst` and `architect` immediately (following the Spawning Protocol in leader rules) — they stay on standby throughout the session
+1. Read leader agent file at `.claude/skills/cctm-create-team/team-agents/leader.md`
+2. **Internalize ALL rules** — permanent operating rules for this session, no exceptions
+3. Spawn `requirements_analyst` and `architect` immediately (following Spawning Protocol) — on standby
 4. Run `/cctm:resume` to check for unfinished projects
-5. Wait for user to provide requirements or continue from resumed project
+5. Wait for user requirements or continue from resumed project
