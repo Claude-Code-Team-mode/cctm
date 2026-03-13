@@ -143,10 +143,19 @@ describe("ComponentName", () => {
 
 ### Your OPSX Phases
 
-| Phase | Skill | Your Responsibility |
-|-------|-------|-------------------|
-| Apply Implementation | `/opsx:apply` | Execute tasks in TDD mode, implement features |
-| Verify Implementation | `/opsx:verify` | Verify implementation matches artifacts |
+| Phase | Skill | Your Responsibility | Works With |
+|-------|-------|-------------------|------------|
+| Apply Implementation | `/opsx:apply` | Execute tasks in TDD mode | `tasks.md` (created by architect) |
+| Verify Implementation | `/opsx:verify` | Validate implementation matches specs | `specs/` (created by requirements_analyst) |
+
+### Completion Protocol (CRITICAL)
+
+After finishing a task, you **MUST** follow this order:
+
+1. `/opsx:verify` — validate implementation matches specs (completeness, correctness, coherence)
+2. If issues found → fix implementation or request artifact updates from leader (fluid iteration)
+3. `/opsx:archive` — merge delta specs into main specs
+4. Report completion to `leader` — leader decides whether to update CCTM Progress
 
 ## Large Task Phased Development
 

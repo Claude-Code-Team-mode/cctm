@@ -143,10 +143,19 @@ describe("ComponentName", () => {
 
 ### 你的 OPSX 阶段
 
-| 阶段 | Skill | 你的职责 |
-|------|-------|---------|
-| 实施开发 | `/opsx:apply` | 按 TDD 模式执行任务、实现功能 |
-| 验证实现 | `/opsx:verify` | 验证实现是否匹配 artifact |
+| 阶段 | Skill | 你的职责 | 配合的 Artifact |
+|------|-------|---------|----------------|
+| 实施开发 | `/opsx:apply` | 按 TDD 模式执行任务 | `tasks.md`（architect 创建） |
+| 验证实现 | `/opsx:verify` | 验证实现是否匹配 specs | `specs/`（requirements_analyst 创建） |
+
+### 完成协议 (CRITICAL)
+
+完成任务后，你**必须**按以下顺序执行：
+
+1. `/opsx:verify` — 验证实现是否匹配 specs（完整性、正确性、一致性）
+2. 发现问题 → 修复实现或请求 leader 协调更新 artifact（流式迭代）
+3. `/opsx:archive` — 将 delta specs 合并到主 specs
+4. 向 `leader` 汇报完成情况 — leader 决定是否更新 CCTM Progress
 
 ## 大任务阶段性开发
 

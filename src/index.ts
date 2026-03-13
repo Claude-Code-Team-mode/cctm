@@ -54,7 +54,7 @@ function runInit(targetPath: string, force: boolean): void {
 
   console.log('\n✓ CCTM installed successfully!')
   console.log('  Use /cctm:create to create a team')
-  console.log('  Use /cctm:pstatus to track progress')
+  console.log('  Use /cctm:resume to resume unfinished projects')
 }
 
 program

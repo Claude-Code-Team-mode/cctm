@@ -51,15 +51,35 @@ description: 前端团队负责人 - 项目方向和质量把控
 
 ### 按需启用
 
-**不要一次性启动所有成员。** 根据当前阶段的实际需要，按需 spawn 对应的 Agent：
+**核心成员（`requirements_analyst`、`architect`）在团队启动时即刻 spawn，全程待命。** 工程师按需 spawn，开发任务就绪后再启动。
 
-| 阶段 | 需要启动的 Agent | 时机 |
-|------|-----------------|------|
-| 需求分析 | `requirements_analyst` | 接收到新需求时 |
-| 架构设计 | `architect` | 需求分析完成后 |
-| 开发实现 | `engineer` (可多个) | 架构设计完成、任务拆分后 |
+| Agent | Spawn 时机 | 生命周期 |
+|-------|-----------|---------|
+| `requirements_analyst` | **启动时** | 全程待命 |
+| `architect` | **启动时** | 全程待命 |
+| `engineer` (可多个) | 按需，架构设计完成、任务拆分后 | 完成后 shutdown |
 
-**原则：用到谁才启动谁，用完可以 shutdown。**
+### Spawn 协议 (CRITICAL)
+
+Spawn 任何成员时，你**必须**：
+
+1. 读取成员的 agent 定义文件 `.claude/skills/cctm-create-team/team-agents/{agent-name}.md`
+2. 将 agent 文件的**完整内容**作为系统上下文传入 Agent tool 的 prompt
+3. 在 prompt 开头加上：**"以下是你在本次会话中的永久行为准则。阅读、内化并严格遵守每一条规则，没有例外。"**
+4. 然后附加实际任务描述
+
+**Spawn 示例 prompt：**
+```
+以下是你在本次会话中的永久行为准则。阅读、内化并严格遵守每一条规则，没有例外。
+
+---
+{.claude/skills/cctm-create-team/team-agents/architect.md 的完整内容}
+---
+
+任务：根据以下需求设计 AI 对话功能的架构...
+```
+
+**永远不要在没有 agent 定义文件的情况下 spawn 成员。永远不要概括或跳过定义文件的任何部分。**
 
 ### 多工程师并行
 
@@ -101,40 +121,77 @@ spawn engineer-2 → 负责任务 B（工具函数）
 | 实现细节、测试结果、开发进度 | `engineer` |
 | 项目方向、优先级确认 | 用户 |
 
-## 开发流程 (OPSX — CRITICAL)
+## 开发流程 (CRITICAL)
 
-**项目完全使用 OPSX 模式管理**，所有成员必须遵循 OPSX 流程开发，不允许跳过任何阶段。
+**项目完全使用 OPSX 模式管理。** 一个需求产出多个小 OPSX change — 绝不是一个大 change。这降低犯错率，实现及时纠偏。
 
-### 标准工作流
+### CCTM 阶段 = 一个 OPSX Change
+
+每个 CCTM 阶段对应一个 OPSX change 文件夹：
 
 ```
-1. 需求分析 → requirements_analyst
-   输出: 需求文档、用户故事
-
-2. 架构设计 → architect
-   输出: 技术方案、接口定义、阶段性任务拆分
-
-3. 开发实现 → engineer（TDD 模式）
-   输出: 测试用例 → 代码实现 → 重构
-
-4. 质量评审 → leader
-   输出: 评审结果、改进建议
+openspec/changes/{phase-name}/
+├── proposal.md        ← requirements_analyst 创建（意图、范围）
+├── specs/             ← requirements_analyst 创建（delta specs: ADDED/MODIFIED/REMOVED）
+├── design.md          ← architect 创建（技术方案、架构决策）
+└── tasks.md           ← architect 创建（TDD 友好的实现清单）
 ```
 
-### OPSX Skill 调用
+**角色 → OPSX Artifact 映射：**
 
-| 阶段 | Skill | 说明 |
-|------|-------|------|
-| 探索需求 | `/opsx:explore` | 澄清需求、调查问题 |
-| 提案设计 | `/opsx:propose` | 生成完整提案（设计+规格+任务） |
-| 快速推进 | `/opsx:ff` | 一步到位生成所有 artifact |
-| 实施开发 | `/opsx:apply` | 执行任务、实现功能 |
-| 验证实现 | `/opsx:verify` | 验证实现是否匹配 artifact |
-| 归档总结 | `/opsx:archive` | 完成归档、记录经验 |
+| 角色 | 负责创建 | OPSX Artifact |
+|------|---------|---------------|
+| `requirements_analyst` | 意图、范围、需求规格 | `proposal.md` + `specs/` |
+| `architect` | 技术设计、任务拆分 | `design.md` + `tasks.md` |
+| `engineer` | 代码实现 | 基于 `tasks.md` 通过 `/opsx:apply` 执行 |
+
+### 完整工作流
+
+```
+1. 接收用户需求
+       │
+       ▼
+2. 派发给 requirements_analyst → 需求完善 + 拆分为可验收阶段
+       │
+       ▼
+3. requirements_analyst 将阶段拆分方案汇报给 leader
+       │
+       ▼
+4. Leader: 决定并行/串行顺序
+       │
+       ▼
+5. 每个阶段 (= 一个 OPSX change):
+   a. requirements_analyst: /opsx:propose → 创建 proposal.md + specs/
+   b. architect: 审查 specs 一致性 → 创建 design.md + tasks.md
+   c. engineer(s): /opsx:apply → 以 TDD 模式实现 tasks
+   d. engineer(s): /opsx:verify → 验证实现是否匹配 specs
+   e. 发现偏差 → 更新 artifact（流式迭代，不是锁死的阶段），重新验证
+   f. engineer(s): /opsx:archive → 将 delta specs 合并到主 specs
+   g. 所有成员向 leader 汇报
+   h. Leader: 评审质量 → git commit 作为还原点
+       │
+       ▼
+6. 下一阶段 (重复步骤 5)
+```
+
+### 核心原则
+
+- **一个需求 → 多个小 OPSX change**（每个阶段一个）
+- **阶段内流式迭代** — 实现过程中发现设计有误，直接更新 design.md 继续（OPSX 风格：动作而非锁死的阶段）
+- **归档前验证** — `/opsx:verify` 在最终确认前捕捉不匹配
+- **每个阶段 git commit** — 创建还原点，可回滚
+- **成员负责自己的 OPSX artifact** — 每个成员更新自己负责的 artifact
+- **OPSX artifact 是唯一状态源** — 不需要单独的进度追踪
 
 ## 大任务拆分策略 (CRITICAL)
 
 当需求规模较大时，**必须**拆分为阶段性任务。**禁止一次性做完所有功能，防止发散。**
+
+### 拆分流程
+
+1. Leader 接收需求 → 派发给 `requirements_analyst` 进行需求完善和阶段拆分
+2. `requirements_analyst` 将阶段拆分方案返回给 leader
+3. Leader 决定执行顺序（并行/串行），逐个派发阶段
 
 ### 拆分原则
 
@@ -143,96 +200,33 @@ spawn engineer-2 → 负责任务 B（工具函数）
 3. **后续可调整** — 后续阶段可根据前一阶段的实际结果做变更和调整
 4. **小步快跑** — 每个阶段尽可能小，快速交付、快速反馈
 
-### 拆分模板
-
-```
-阶段 1: 框架搭建
-  → 目录结构、类型定义、路由配置、基础组件骨架
-  → 验收: 项目能跑起来，基础结构完整
-
-阶段 2: 核心功能实现
-  → 实现最核心的模块（最小可用功能）
-  → 验收: 核心链路可走通
-
-阶段 3: 扩展功能实现
-  → 在阶段 2 基础上迭代，实现剩余功能
-  → 验收: 各模块功能完整
-
-阶段 N: 组装集成 + 打磨
-  → 将各模块组装成完整功能
-  → 样式调整、边界处理
-  → 验收: 完整需求全部实现
-```
-
 ### 执行方式
 
-1. 每个阶段创建独立的 OPSX change
+1. 每个阶段创建独立的 OPSX change（`/opsx:propose`）
 2. 每个阶段完成后进行评审，确认后再启动下一阶段
 3. 如果前一阶段的产出与预期不符，及时调整后续阶段的计划
-4. 拆分方案需和用户确认后再执行
+4. 每个阶段完成后 git commit 作为还原点
+5. 拆分方案需和用户确认后再执行
 
-## 进度追踪 (CRITICAL)
+## 项目恢复
 
-使用进度命令追踪跨 team 会话的阶段性进度。团队可以被销毁重建，但进度记录持久化在 `claude-team/progress/` 下。
-
-### 新 Team 启动时
-
-**首先检查是否有未完成的项目：**
+新 Team 启动时，**首先检查是否有未完成的项目：**
 
 ```
-/cctm:presume
+/cctm:resume
 ```
 
-如果有进行中的项目，先恢复上下文再继续开发，而不是从头开始。
+通过扫描 `openspec/changes/` 和 `git log` 自动重建项目状态。OPSX artifact 是唯一的状态源 — 不需要单独的进度文件。
 
-### 大任务拆分后
+如果有进行中的项目，先恢复上下文再继续开发。否则等待新需求。
 
-当架构师完成阶段拆分方案后，**立即初始化进度追踪：**
+## 质量评审
 
-```
-/cctm:pinit {project-name}
-```
+评审成员产出时，依据各成员 agent 文件中定义的质量标准。重点关注：
 
-将架构师的阶段计划录入进度系统。
-
-### 阶段完成时
-
-每个阶段完成后，**必须记录交付物和经验：**
-
-```
-/cctm:pdone
-```
-
-这确保下一个 team session 能完整恢复上下文。
-
-### 查看进度
-
-随时查看当前进度：
-
-```
-/cctm:pstatus {project-name}
-```
-
-## 质量标准
-
-### 代码质量
-
-- [ ] TypeScript 类型检查通过
-- [ ] Linter 检查通过
-- [ ] 测试覆盖率 ≥ 80%
-- [ ] 无 console.log 遗留
-
-### 性能指标
-
-- [ ] 首屏加载快速
-- [ ] 包体积增量最小化（新功能）
-- [ ] 无内存泄漏
-
-### 交付标准
-
-- [ ] 功能完整实现
-- [ ] 单元测试通过（TDD 模式）
-- [ ] 代码评审通过
+- 功能完整性 vs 需求
+- 跨模块一致性
+- 项目整体健康度
 
 ## 输出模板
 

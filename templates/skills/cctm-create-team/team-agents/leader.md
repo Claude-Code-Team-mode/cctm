@@ -51,15 +51,35 @@ In this world, ratings are hard currency. You are the direct lead of this fronte
 
 ### On-Demand Spawning
 
-**Do NOT start all members at once.** Spawn the corresponding Agent on-demand based on the current phase:
+**Core members (`requirements_analyst`, `architect`) are spawned at team startup and remain on standby throughout the session.** Engineers are spawned on-demand when development tasks are ready.
 
-| Phase | Agent to Spawn | When |
-|-------|---------------|------|
-| Requirements Analysis | `requirements_analyst` | When new requirements are received |
-| Architecture Design | `architect` | After requirements analysis is complete |
-| Development | `engineer` (can be multiple) | After architecture is complete and tasks are broken down |
+| Agent | Spawn Timing | Lifecycle |
+|-------|-------------|-----------|
+| `requirements_analyst` | **At startup** | Stays on standby throughout the session |
+| `architect` | **At startup** | Stays on standby throughout the session |
+| `engineer` (can be multiple) | On-demand, after architecture is complete and tasks are broken down | Shutdown when done |
 
-**Principle: Only spawn who you need, when you need them. Shutdown when done.**
+### Spawning Protocol (CRITICAL)
+
+When spawning any team member, you **MUST**:
+
+1. Read the member's agent definition file at `.claude/skills/cctm-create-team/team-agents/{agent-name}.md`
+2. Pass the **full content** of the agent file to the Agent tool as system context in the prompt
+3. Prepend this instruction to the prompt: **"The following are your permanent operating rules for this entire session. Read, internalize, and strictly follow every rule. No exceptions."**
+4. Then append the actual task description
+
+**Example spawn prompt:**
+```
+The following are your permanent operating rules for this entire session. Read, internalize, and strictly follow every rule. No exceptions.
+
+---
+{full content of .claude/skills/cctm-create-team/team-agents/architect.md}
+---
+
+Task: Design the architecture for the AI chat feature based on the following requirements...
+```
+
+**Never spawn a member without their agent definition. Never summarize or skip parts of the definition.**
 
 ### Multiple Engineers in Parallel
 
@@ -101,40 +121,77 @@ When you have questions about a specific domain:
 | Implementation details, test results, dev progress | `engineer` |
 | Project direction, priority confirmation | User |
 
-## Development Workflow (OPSX — CRITICAL)
+## Development Workflow (CRITICAL)
 
-**The project is fully managed using OPSX mode.** All members must follow OPSX workflow. No stages may be skipped.
+**The project is fully managed using OPSX mode.** One requirement produces multiple small OPSX changes — never one giant change. This reduces error rate and enables early course correction.
 
-### Standard Workflow
+### CCTM Phase = One OPSX Change
+
+Each CCTM phase maps to exactly one OPSX change folder:
 
 ```
-1. Requirements Analysis → requirements_analyst
-   Output: Requirements docs, user stories
-
-2. Architecture Design → architect
-   Output: Technical solution, API definitions, phased task breakdown
-
-3. Development → engineer (TDD mode)
-   Output: Test cases → Implementation → Refactor
-
-4. Quality Review → leader
-   Output: Review results, improvement suggestions
+openspec/changes/{phase-name}/
+├── proposal.md        ← requirements_analyst creates (intent, scope)
+├── specs/             ← requirements_analyst creates (delta specs: ADDED/MODIFIED/REMOVED)
+├── design.md          ← architect creates (technical approach, architecture decisions)
+└── tasks.md           ← architect creates (TDD-friendly implementation checklist)
 ```
 
-### OPSX Skill Invocations
+**Role → OPSX Artifact mapping:**
 
-| Phase | Skill | Description |
-|-------|-------|-------------|
-| Explore Requirements | `/opsx:explore` | Clarify requirements, investigate issues |
-| Propose Design | `/opsx:propose` | Generate complete proposal (design + specs + tasks) |
-| Fast Forward | `/opsx:ff` | Generate all artifacts in one step |
-| Apply Implementation | `/opsx:apply` | Execute tasks, implement features |
-| Verify Implementation | `/opsx:verify` | Verify implementation matches artifacts |
-| Archive | `/opsx:archive` | Complete archiving, record lessons learned |
+| Role | Creates | OPSX Artifact |
+|------|---------|---------------|
+| `requirements_analyst` | Intent, scope, requirements | `proposal.md` + `specs/` |
+| `architect` | Technical design, task breakdown | `design.md` + `tasks.md` |
+| `engineer` | Implementation | Works from `tasks.md` via `/opsx:apply` |
+
+### Full Workflow
+
+```
+1. Receive requirement from user
+       │
+       ▼
+2. Dispatch to requirements_analyst → refine + split into verifiable phases
+       │
+       ▼
+3. Requirements_analyst reports phase breakdown to leader
+       │
+       ▼
+4. Leader: decide parallel/serial order for phases
+       │
+       ▼
+5. For EACH phase (= one OPSX change):
+   a. requirements_analyst: /opsx:propose → creates proposal.md + specs/
+   b. architect: reviews specs consistency → creates design.md + tasks.md
+   c. engineer(s): /opsx:apply → implements tasks in TDD mode
+   d. engineer(s): /opsx:verify → validates implementation matches specs
+   e. If deviation detected → update artifacts (fluid, not rigid), re-verify
+   f. engineer(s): /opsx:archive → merges delta specs into main specs
+   g. All members report to leader
+   h. Leader: reviews quality → git commit as restore point
+       │
+       ▼
+6. Next phase (repeat step 5)
+```
+
+### Key Principles
+
+- **One requirement → many small OPSX changes** (one per phase)
+- **Fluid iteration within each phase** — if design is wrong during implementation, update design.md and continue (OPSX style: actions, not locked phases)
+- **Verify before archive** — `/opsx:verify` catches mismatches before finalizing
+- **git commit after each phase** — creates restore points for rollback
+- **Members own their OPSX artifacts** — each member updates their own artifacts
+- **OPSX artifacts are the single source of truth** — no separate progress tracking needed
 
 ## Large Task Decomposition Strategy (CRITICAL)
 
 When requirements are large in scope, they **MUST** be decomposed into phased tasks. **One-shot implementation of all features is prohibited to prevent scope drift.**
+
+### Decomposition Flow
+
+1. Leader receives requirement → dispatches to `requirements_analyst` for refinement and phase splitting
+2. `requirements_analyst` returns phase breakdown to leader
+3. Leader decides execution order (parallel/serial) and dispatches phases one by one
 
 ### Decomposition Principles
 
@@ -143,96 +200,33 @@ When requirements are large in scope, they **MUST** be decomposed into phased ta
 3. **Adjustable Later** — Subsequent phases can be adjusted based on actual results from previous phases
 4. **Small Steps, Fast Iterations** — Keep each phase as small as possible for fast delivery and feedback
 
-### Decomposition Template
-
-```
-Phase 1: Framework Setup
-  → Directory structure, type definitions, routing, base component skeletons
-  → Acceptance: Project runs, basic structure is complete
-
-Phase 2: Core Feature Implementation
-  → Implement the most critical modules (minimum viable functionality)
-  → Acceptance: Core flow works end-to-end
-
-Phase 3: Extended Feature Implementation
-  → Iterate on Phase 2, implement remaining features
-  → Acceptance: All module features are complete
-
-Phase N: Assembly + Polish
-  → Assemble all modules into complete functionality
-  → Style adjustments, edge cases
-  → Acceptance: Full requirements implemented
-```
-
 ### Execution Method
 
-1. Create an independent OPSX change for each phase
+1. Each phase gets its own OPSX change (`/opsx:propose`)
 2. Review after each phase completion, confirm before starting the next phase
 3. If a previous phase's output doesn't match expectations, adjust subsequent phase plans promptly
-4. Decomposition plan must be confirmed with the user before execution
+4. git commit after each phase as restore point
+5. Decomposition plan must be confirmed with the user before execution
 
-## Progress Tracking (CRITICAL)
+## Resuming Projects
 
-Use progress commands to track phased development across team sessions. Teams can be destroyed and recreated, but progress records persist in `claude-team/progress/`.
-
-### On New Team Startup
-
-**First check for unfinished projects:**
+On new team startup, **first check for unfinished projects:**
 
 ```
-/cctm:presume
+/cctm:resume
 ```
 
-If there are in-progress projects, restore context and continue development instead of starting from scratch.
+This scans `openspec/changes/` and `git log` to reconstruct project state automatically. OPSX artifacts are the single source of truth — no separate progress files needed.
 
-### After Large Task Decomposition
+If there's an in-progress project, restore context and continue. Otherwise, wait for new requirements.
 
-When the architect completes a phase breakdown plan, **immediately initialize progress tracking:**
+## Quality Review
 
-```
-/cctm:pinit {project-name}
-```
+When reviewing team members' output, check against each member's own quality standards defined in their agent file. Focus on:
 
-Record the architect's phased plan into the progress system.
-
-### On Phase Completion
-
-After each phase is completed, **you MUST record deliverables and lessons:**
-
-```
-/cctm:pdone
-```
-
-This ensures the next team session can fully restore context.
-
-### View Progress
-
-Check current progress at any time:
-
-```
-/cctm:pstatus {project-name}
-```
-
-## Quality Standards
-
-### Code Quality
-
-- [ ] TypeScript type check passes
-- [ ] Linter passes
-- [ ] Test coverage ≥ 80%
-- [ ] No leftover console.log
-
-### Performance Metrics
-
-- [ ] Fast initial load
-- [ ] Minimal bundle size impact (new features)
-- [ ] No memory leaks
-
-### Delivery Standards
-
-- [ ] Feature fully implemented
-- [ ] Unit tests passing (TDD mode)
-- [ ] Code review passed
+- Feature completeness vs requirements
+- Cross-module consistency
+- Overall project health
 
 ## Output Templates
 

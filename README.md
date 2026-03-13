@@ -34,15 +34,10 @@ In Claude Code:
 /cctm:create
 ```
 
-### 3. Track progress
+### 3. Resume an unfinished project
 
 ```
-/cctm:pinit my-feature
-/cctm:pstatus my-feature
-/cctm:pdone
-/cctm:presume
-/cctm:pupdate Added API layer
-/cctm:plist
+/cctm:resume
 ```
 
 ## CLI Commands
@@ -65,38 +60,19 @@ Update CCTM templates to the latest version (overwrites existing files).
 ├── skills/
 │   ├── cctm-create-team/
 │   │   ├── SKILL.md
+│   │   ├── WORKFLOW.md
 │   │   └── team-agents/
 │   │       ├── leader.md / leader.ZH-CN.md
 │   │       ├── requirements_analyst.md / .ZH-CN.md
 │   │       ├── architect.md / .ZH-CN.md
 │   │       └── engineer.md / .ZH-CN.md
-│   ├── cctm-pinit/
-│   │   ├── SKILL.md
-│   │   └── SKILL.ZH-CN.md
-│   ├── cctm-pstatus/
-│   │   ├── SKILL.md
-│   │   └── SKILL.ZH-CN.md
-│   ├── cctm-pdone/
-│   │   ├── SKILL.md
-│   │   └── SKILL.ZH-CN.md
-│   ├── cctm-pupdate/
-│   │   ├── SKILL.md
-│   │   └── SKILL.ZH-CN.md
-│   ├── cctm-presume/
-│   │   ├── SKILL.md
-│   │   └── SKILL.ZH-CN.md
-│   └── cctm-plist/
+│   └── cctm-resume/
 │       ├── SKILL.md
 │       └── SKILL.ZH-CN.md
 └── commands/
     └── cctm/
         ├── create.md          # /cctm:create
-        ├── pinit.md           # /cctm:pinit
-        ├── pstatus.md         # /cctm:pstatus
-        ├── pdone.md           # /cctm:pdone
-        ├── pupdate.md         # /cctm:pupdate
-        ├── presume.md         # /cctm:presume
-        └── plist.md           # /cctm:plist
+        └── resume.md          # /cctm:resume
 ```
 
 ## Team Roles
@@ -110,11 +86,13 @@ Update CCTM templates to the latest version (overwrites existing files).
 
 ## Workflow
 
-1. **Leader** receives the requirement and spawns agents on-demand
-2. **Requirements Analyst** clarifies and documents requirements
-3. **Architect** designs technical solution with phased task breakdown
+1. **Leader** receives the requirement and dispatches to team members
+2. **Requirements Analyst** refines requirements and splits into verifiable phases
+3. **Architect** designs technical solution with TDD-friendly task breakdown
 4. **Engineer(s)** implement using TDD (can run in parallel for independent tasks)
-5. **Leader** reviews quality and coordinates next steps
+5. **Leader** reviews quality, git commits as restore point, proceeds to next phase
+
+Project state is derived from OPSX artifacts (`openspec/changes/`) and git history — no separate progress tracking needed.
 
 ## Customization
 

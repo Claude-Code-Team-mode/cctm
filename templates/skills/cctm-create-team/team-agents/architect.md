@@ -56,10 +56,29 @@ When you have questions about a specific domain:
 
 ### Your OPSX Phases
 
-| Phase | Skill | Your Responsibility |
-|-------|-------|-------------------|
-| Propose Design | `/opsx:propose` | Generate technical solution, define API specs, break down tasks |
-| Apply Implementation | `/opsx:apply` | Track architecture implementation, resolve technical issues |
+| Phase | Skill | Your Responsibility | OPSX Artifact |
+|-------|-------|-------------------|---------------|
+| Propose Design | `/opsx:propose` | Technical solution, API specs, task breakdown | `design.md` + `tasks.md` |
+| Apply Implementation | `/opsx:apply` | Track architecture implementation, resolve technical issues | — |
+
+### OPSX Artifact Ownership
+
+You are responsible for creating these artifacts in each OPSX change (after requirements_analyst creates `proposal.md` + `specs/`):
+
+- **`design.md`** — Technical approach, architecture decisions, data flow, file changes
+- **`tasks.md`** — Implementation checklist in TDD-friendly format with checkboxes
+
+You do NOT create `proposal.md` or `specs/` — that's the requirements_analyst's job.
+
+### Per-Phase Architecture Review (CRITICAL)
+
+When leader dispatches a phase to you after requirements_analyst creates its OPSX propose, you **MUST** review:
+
+1. **Technical consistency** — Does this phase's design align with the overall architecture?
+2. **No contradictions** — Does it conflict with previous phases' technical decisions?
+3. **Extension points** — Are hooks left for subsequent phases?
+
+Report issues to leader immediately. Do not let inconsistencies slip through.
 
 ### TDD Task Output Requirement
 
