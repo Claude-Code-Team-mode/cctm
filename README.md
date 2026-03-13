@@ -7,12 +7,17 @@ CCTM provides a structured team workflow with specialized agents (leader, requir
 ## Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI installed
-- [OpenSpec](https://github.com/ranyitz/openspec) recommended (CCTM works best with OPSX workflow)
+- Node.js >= 18
+- [OpenSpec](https://github.com/Fission-AI/OpenSpec) will be auto-installed if not present
 
 ## Installation
 
 ```bash
-npm install -g claude-code-team-manager
+git clone git@github.com:Claude-Code-Team-mode/cctm.git
+cd cctm
+npm install
+npm run build
+npm install -g ./
 ```
 
 ## Quick Start

@@ -19,10 +19,36 @@ function runInit(targetPath: string, force: boolean): void {
     console.log(`Created ${claudeDir}`)
   }
 
-  try {
-    execSync('which openspec', { stdio: 'ignore' })
-  } catch {
-    console.log('ℹ OpenSpec not detected. CCTM works best with OpenSpec. Install: npm i -g openspec')
+  const hasOpenSpec = (() => {
+    try {
+      execSync('which openspec', { stdio: 'ignore' })
+      return true
+    } catch {
+      return false
+    }
+  })()
+
+  if (!hasOpenSpec) {
+    console.log('OpenSpec not detected. Installing...')
+    try {
+      execSync('npm i -g openspec', { stdio: 'inherit' })
+      console.log('✓ OpenSpec installed')
+    } catch (error) {
+      console.error('Failed to install OpenSpec. Install manually: npm i -g openspec')
+      process.exit(1)
+    }
+  }
+
+  const openspecDir = join(target, 'openspec')
+  if (!fileExists(openspecDir)) {
+    console.log('Initializing OpenSpec...')
+    try {
+      execSync('openspec init', { cwd: target, stdio: 'inherit' })
+      console.log('✓ OpenSpec initialized')
+    } catch (error) {
+      console.error('Failed to initialize OpenSpec. Run manually: openspec init')
+      process.exit(1)
+    }
   }
 
   const templatesDir = getTemplatesDir()
