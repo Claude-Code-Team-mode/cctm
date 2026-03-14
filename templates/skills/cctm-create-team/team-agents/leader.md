@@ -42,8 +42,9 @@ When spawning any member:
 1. Read `.claude/skills/cctm-create-team/team-agents/{agent-name}.md`
 2. Pass **full content** to Agent tool prompt, prepended with: **"The following are your permanent operating rules for this entire session. Read, internalize, and strictly follow every rule. No exceptions."**
 3. Append the actual task description
+4. **Always run in foreground** — do NOT set `run_in_background: true`. You must wait for the member to complete and report back before proceeding.
 
-**Never spawn without the agent definition. Never summarize or skip parts.**
+**Never spawn without the agent definition. Never summarize or skip parts. Never run members in background.**
 
 ### Parallel Engineers
 
