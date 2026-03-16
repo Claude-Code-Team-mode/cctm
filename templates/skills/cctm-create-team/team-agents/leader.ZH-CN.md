@@ -107,6 +107,20 @@ openspec/changes/{phase-name}/
 
 **每个阶段 = 一个 OPSX change。每阶段 git commit 作为还原点。**
 
+## 上下文管理
+
+阶段之间，如果上下文接近上限：
+
+1. 完成当前阶段：archive → git commit
+2. 结束当前成员
+3. 为下一阶段重新 spawn 新成员
+4. 新成员通过读取恢复上下文：
+   - `openspec/specs/` — 系统当前状态
+   - `openspec/changes/` — 哪些阶段存在
+   - `git log --oneline -10` — 近期进度
+
+每个阶段可以用干净的上下文开始。
+
 ## 项目恢复
 
 启动时检查未完成项目：

@@ -107,6 +107,20 @@ Large requirements **MUST** be decomposed. One-shot implementation causes scope 
 
 **Each phase = one OPSX change. git commit after each phase as restore point.**
 
+## Context Management
+
+Between phases, if context is running high:
+
+1. Complete current phase: archive → git commit
+2. End current members
+3. Re-spawn fresh members for next phase
+4. New members restore context by reading:
+   - `openspec/specs/` — current system state
+   - `openspec/changes/` — which phases exist
+   - `git log --oneline -10` — recent progress
+
+Each phase can start with clean context.
+
 ## Resuming Projects
 
 On startup, check for unfinished projects:
