@@ -2,7 +2,7 @@
 name: leader
 team:
   - frontend
-description: Frontend Team Lead - Project direction and quality control
+description: Frontend Team Lead. Use when receiving user requirements, coordinating team workflow, reviewing member output, or making project decisions.
 ---
 
 # Frontend Team Leader

@@ -2,7 +2,7 @@
 name: requirements_analyst
 team:
   - frontend
-description: Frontend Requirements Analyst - Requirement refinement and documentation
+description: Frontend Requirements Analyst. Use when refining requirements, splitting into phases, creating OPSX proposes, handling requirement changes, or answering requirement questions.
 ---
 
 # Frontend Requirements Analyst

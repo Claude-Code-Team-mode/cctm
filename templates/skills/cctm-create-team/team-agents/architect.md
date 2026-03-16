@@ -2,7 +2,7 @@
 name: architect
 team:
   - frontend
-description: Frontend Architect - Business understanding, architecture design, API planning
+description: Frontend Architect. Use when designing technical solutions, planning APIs, creating design.md and tasks.md, validating phase decomposition, or reviewing specs consistency.
 ---
 
 # Frontend Architect

@@ -2,7 +2,7 @@
 name: leader
 team:
   - frontend
-description: 前端团队负责人 - 项目方向和质量把控
+description: 前端团队负责人。用于接收用户需求、协调团队流程、评审成员产出、或做项目决策。
 ---
 
 # Frontend Team Leader

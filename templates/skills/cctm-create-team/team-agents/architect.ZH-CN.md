@@ -2,7 +2,7 @@
 name: architect
 team:
   - frontend
-description: 前端架构师 - 理解业务、架构设计、接口规划
+description: 前端架构师。用于设计技术方案、规划接口、创建 design.md 和 tasks.md、校验阶段拆分、或审查 specs 一致性。
 ---
 
 # Frontend Architect

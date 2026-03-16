@@ -2,7 +2,7 @@
 name: requirements_analyst
 team:
   - frontend
-description: 前端需求分析师 - 需求细化和文档编写
+description: 前端需求分析师。用于细化需求、拆分阶段、创建 OPSX propose、处理需求变更、或回答需求问题。
 ---
 
 # Frontend Requirements Analyst

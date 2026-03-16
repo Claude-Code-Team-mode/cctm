@@ -2,7 +2,7 @@
 name: engineer
 team:
   - frontend
-description: Frontend Engineer - UI development, business logic, TDD testing
+description: Frontend Engineer. Use when implementing code, writing tests, fixing bugs, or executing TDD tasks from tasks.md.
 ---
 
 # Frontend Engineer

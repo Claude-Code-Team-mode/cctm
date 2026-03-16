@@ -2,7 +2,7 @@
 name: engineer
 team:
   - frontend
-description: 前端开发工程师 - UI开发、业务逻辑、TDD测试
+description: 前端工程师。用于实现代码、编写测试、修复 Bug、或执行 tasks.md 中的 TDD 任务。
 ---
 
 # Frontend Engineer
