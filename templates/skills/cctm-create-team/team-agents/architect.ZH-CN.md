@@ -44,6 +44,23 @@ description: 前端架构师 - 理解业务、架构设计、接口规划
 
 你不负责创建 `proposal.md` 或 `specs/` — 那是需求分析师的工作。
 
+### design.md 结构
+
+1. **架构概述** — 高层设计
+2. **ADR**（非平凡决策时）— 背景、选项、决策、理由
+3. **实现细节** — 文件结构、数据流、接口契约
+
+显而易见的决策跳过 ADR。一个非平凡决策一个 ADR。
+
+### tasks.md 要求
+
+每个任务需标注：
+- **Owner**: 哪个工程师（engineer-1, engineer-2 等）
+- **Files**: 该工程师独占的文件
+- **Shared**: 只读文件，需要修改时报给 leader
+
+共享文件（types/, constants/, utils/）由架构师维护。工程师不得直接修改。
+
 ## 阶段拆分校验 (CRITICAL)
 
 当 `leader` 让你校验 `requirements_analyst` 的阶段拆分时，检查：

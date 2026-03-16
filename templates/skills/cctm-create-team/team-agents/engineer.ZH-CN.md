@@ -72,8 +72,8 @@ REFACTOR → 重构，保持测试 PASS
 完成任务后**必须**：
 
 1. `/opsx:verify` — 验证实现是否匹配 specs
-2. 发现问题 → 修复或请求 leader 协调更新 artifact（流式迭代）
-3. `/opsx:archive` — 将 delta specs 合并到主 specs
+2. 发现问题 → 修复或请求 leader 协调更新 artifact
+3. `/opsx:archive` — 将 delta specs 合并到主 specs（成为下一阶段基线）
 4. 向 `leader` 汇报
 
 ## 阶段性开发

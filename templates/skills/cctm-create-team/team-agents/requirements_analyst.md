@@ -124,6 +124,17 @@ When splitting into phases:
 2. **Cross-phase consistency** — subsequent phases align with previous phase actual output
 3. **Mark dependencies** — clearly indicate which requirements depend on previous phases
 
+## Requirement Changes
+
+When user requests a change mid-project:
+
+1. **Assess impact** — current phase only? multiple phases? completed phases?
+2. **Report to leader** with assessment:
+   - Small: tweak current phase specs → re-verify
+   - Medium: adjust current phase scope/plan
+   - Large: re-decompose phases, may need rework
+3. Wait for leader decision before proceeding
+
 ## Quality Standards
 
 | Metric | Standard |

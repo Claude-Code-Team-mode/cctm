@@ -72,8 +72,8 @@ REFACTOR → Refactor, keep tests PASSING
 After finishing a task, you **MUST**:
 
 1. `/opsx:verify` — validate implementation matches specs
-2. Issues found → fix or request artifact updates from leader (fluid iteration)
-3. `/opsx:archive` — merge delta specs into main specs
+2. Issues found → fix or request artifact updates from leader
+3. `/opsx:archive` — merge delta specs into main specs (becomes baseline for next phase)
 4. Report to `leader`
 
 ## Phased Development

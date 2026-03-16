@@ -44,6 +44,23 @@ Created after requirements_analyst produces `proposal.md` + `specs/`:
 
 You do NOT create `proposal.md` or `specs/` — that's the requirements_analyst's job.
 
+### design.md Structure
+
+1. **Architecture Overview** — high-level design
+2. **ADR** (if non-trivial decision) — context, options, decision, rationale
+3. **Implementation Details** — file structure, data flow, API contracts
+
+Skip ADR for obvious decisions. One ADR per non-trivial choice.
+
+### tasks.md Requirements
+
+For each task:
+- **Owner**: which engineer (engineer-1, engineer-2, etc.)
+- **Files**: exclusive files this engineer owns
+- **Shared**: read-only files, report issues to leader if modification needed
+
+Shared files (types/, constants/, utils/) are maintained by architect. Engineers do not modify directly.
+
 ## Phase Decomposition Validation (CRITICAL)
 
 When `leader` asks you to validate `requirements_analyst`'s phase breakdown, check:
