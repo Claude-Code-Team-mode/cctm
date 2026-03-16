@@ -18,8 +18,8 @@ One requirement is split into multiple phases. Each phase maps to exactly one OP
 openspec/changes/{phase-name}/
 ├── proposal.md        ← requirements_analyst (intent, scope)
 ├── specs/             ← requirements_analyst (delta specs: ADDED/MODIFIED/REMOVED)
-├── design.md          ← architect (technical approach)
-└── tasks.md           ← architect (TDD implementation checklist)
+├── design.md          ← architect (technical approach, ADR)
+└── tasks.md           ← architect (TDD tasks with file boundaries)
 ```
 
 ## Workflow
@@ -28,49 +28,74 @@ openspec/changes/{phase-name}/
 User requirement (e.g. "Build a login page")
     │
     ▼
-Leader → Requirements Analyst
-    │  Refine requirement, split into phases
+Leader → Requirements Analyst: refine + split phases
     │
     ▼
-Leader: decide parallel/serial order for phases
+Requirements Analyst → Leader: phase breakdown
+    │
+    ▼
+Leader → Architect: validate technical feasibility (optional)
+    │
+    ▼
+Leader: confirm with user, decide parallel/serial order
     │
     ▼
 For EACH phase (= one OPSX change):
     │
     ├─ Requirements Analyst: /opsx:propose
-    │    → proposal.md (intent, scope)
-    │    → specs/ (delta specs with Given/When/Then scenarios)
+    │    → proposal.md + specs/
     │
     ├─ Architect: review specs + create design
-    │    → design.md (technical approach, architecture decisions)
-    │    → tasks.md (TDD-friendly checklist)
+    │    → design.md + tasks.md (with file boundaries)
     │
-    ├─ Engineer(s): /opsx:apply
-    │    → Implement tasks in TDD mode
+    ├─ Engineer(s): /opsx:apply (spawn on-demand, foreground)
+    │    → TDD implementation
     │
     ├─ Engineer(s): /opsx:verify
-    │    → Validate implementation matches specs
+    │    → Validate vs specs
     │
-    ├─ If deviation → update artifacts, re-verify (fluid, not rigid)
+    ├─ If deviation → update artifacts, re-verify (fluid iteration)
     │
     ├─ Engineer(s): /opsx:archive
-    │    → Merge delta specs into main specs
+    │    → Merge delta specs (becomes baseline for next phase)
     │
-    ├─ All members → report to Leader
     ├─ Leader: review quality
+    │
     └─ git commit (restore point)
     │
     ▼
 Next phase
 ```
 
+## Requirement Changes
+
+```
+User requests change mid-project
+    │
+    ▼
+Requirements Analyst: assess impact
+    │  - Current phase only?
+    │  - Multiple phases?
+    │  - Completed phases?
+    │
+    ▼
+Requirements Analyst → Leader: report assessment
+    │  - Small: tweak current specs → re-verify
+    │  - Medium: adjust phase scope/plan
+    │  - Large: re-decompose phases
+    │
+    ▼
+Leader: decision → proceed
+```
+
 ## Key Principles
 
-- **Small granularity** — One requirement → many OPSX changes, not one giant change
-- **Fluid iteration** — Within a phase, update artifacts anytime (OPSX: actions, not locked phases)
-- **Verify before archive** — `/opsx:verify` catches mismatches before finalizing
-- **git commit per phase** — Restore points for rollback
-- **Members own OPSX artifacts, file system is the single source of truth**
+- **Small phases** — decompose aggressively, one OPSX change per phase
+- **Foreground execution** — all members run in foreground, Leader waits for reports
+- **Fluid iteration** — within a phase, update artifacts anytime
+- **Verify before archive** — `/opsx:verify` catches mismatches first
+- **Archive = baseline** — merged specs become next phase's input
+- **git commit per phase** — restore points for rollback
 
 ## Team Roles
 
