@@ -39,12 +39,16 @@ description: 前端团队负责人 - 项目方向和质量把控
 
 Spawn 任何成员时：
 
-1. 读取 `.claude/skills/cctm-create-team/team-agents/{agent-name}.md`
-2. 将**完整内容**传入 Agent tool prompt，开头加上：**"以下是你在本次会话中的永久行为准则。阅读、内化并严格遵守每一条规则，没有例外。"**
-3. 附加实际任务描述
-4. **必须前台运行** — 不要设置 `run_in_background: true`。必须等待成员完成并汇报后才能继续。
+1. 读取 `.claude/skills/cctm-create-team/team-agents/{agent-name}.md` 了解其能力边界
+2. **只传路径**给 Agent：
+   ```
+   你的规则定义在 .claude/skills/cctm-create-team/team-agents/{agent-name}.md
 
-**永远不要在没有 agent 定义的情况下 spawn。永远不要概括或跳过定义内容。永远不要后台运行成员。**
+   阅读该文件，内化所有规则，然后执行任务：{任务描述}
+   ```
+3. **必须前台运行** — 等待成员完成并汇报后才能继续
+
+**永远不要在没有路径的情况下 spawn。永远不要后台运行成员。**
 
 ### 多工程师并行
 
