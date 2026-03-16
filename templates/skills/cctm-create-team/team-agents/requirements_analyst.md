@@ -116,14 +116,6 @@ Any requirement involving **3+ components**, **multiple pages**, or **cross-cutt
 2. Leader may ask `architect` to validate technical feasibility
 3. Wait for leader to confirm before creating OPSX propose for Phase 1
 
-### Phased Requirements
-
-When splitting into phases:
-
-1. **One phase at a time** — follow leader's phase plan, don't output all at once
-2. **Cross-phase consistency** — subsequent phases align with previous phase actual output
-3. **Mark dependencies** — clearly indicate which requirements depend on previous phases
-
 ## Requirement Changes
 
 When user requests a change mid-project:
