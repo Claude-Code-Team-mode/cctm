@@ -112,11 +112,9 @@ openspec/changes/{phase-name}/
 每个阶段完成后（archive → git commit）：
 
 1. 结束当前成员
-2. 为下一阶段重新 spawn 新成员
-3. 新成员通过读取恢复上下文：
-   - `openspec/specs/` — 系统当前状态
-   - `openspec/changes/` — 哪些阶段存在
-   - `git log --oneline -10` — 近期进度
+2. 执行 `/cctm:resume` 获取当前状态摘要
+3. 重新 spawn 新成员，将摘要作为上下文传入
+4. 开始下一阶段
 
 每个阶段用干净的上下文开始。
 

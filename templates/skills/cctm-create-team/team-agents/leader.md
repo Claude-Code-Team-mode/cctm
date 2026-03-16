@@ -112,11 +112,9 @@ Large requirements **MUST** be decomposed. One-shot implementation causes scope 
 After each phase completes (archive → git commit):
 
 1. End current members
-2. Re-spawn fresh members for next phase
-3. New members restore context by reading:
-   - `openspec/specs/` — current system state
-   - `openspec/changes/` — which phases exist
-   - `git log --oneline -10` — recent progress
+2. Run `/cctm:resume` to get current state summary
+3. Re-spawn fresh members, pass the summary as context
+4. Start next phase
 
 Each phase starts with clean context.
 
