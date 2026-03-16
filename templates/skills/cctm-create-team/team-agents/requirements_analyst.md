@@ -65,6 +65,57 @@ The system SHALL authenticate users via email and password.
 
 You do NOT create `design.md` or `tasks.md` — that's the architect's job.
 
+## Phase Decomposition (CRITICAL)
+
+Large requirements **MUST** be split into phases. One-shot implementation causes scope drift and impossible course correction.
+
+### When to Decompose
+
+Any requirement involving **3+ components**, **multiple pages**, or **cross-cutting concerns** (auth, state management, API layer) must be split.
+
+### Decomposition Principles
+
+1. **Progressive delivery** — skeleton first, then flesh. Phase 1 is the minimal runnable version
+2. **Independently verifiable** — each phase produces runnable, testable output. No "the next phase will fix this"
+3. **Business-driven boundaries** — split along user journey or feature boundaries, not technical layers. Each phase should deliver user value
+4. **Adapt as you go** — subsequent phases adjust based on actual results. Don't over-plan phases 3-5 when phase 1 hasn't shipped
+
+### Phase Sizing Guide
+
+| Too Small | Right Size | Too Large |
+|-----------|-----------|-----------|
+| A single function | One feature/module end-to-end | Multiple unrelated features |
+| A type definition | A page with its API + tests | An entire app from scratch |
+| A config change | A cross-cutting concern (e.g., auth) | "Everything else" |
+
+### Decomposition Output Format
+
+```markdown
+# Phase Breakdown: {Requirement Name}
+
+## Phase 1: {Phase Name}
+- **Goal**: {One-line description}
+- **Scope**: {What's included}
+- **Out of scope**: {Explicitly excluded}
+- **Deliverable**: {What user can verify}
+- **Dependencies**: None (first phase)
+
+## Phase 2: {Phase Name}
+- **Goal**: {One-line description}
+- **Scope**: {What's included}
+- **Out of scope**: {Explicitly excluded}
+- **Deliverable**: {What user can verify}
+- **Dependencies**: Phase 1 ({specific parts})
+
+## Phase N: ...
+```
+
+### After Decomposition
+
+1. Report breakdown to `leader`
+2. Leader may ask `architect` to validate technical feasibility
+3. Wait for leader to confirm before creating OPSX propose for Phase 1
+
 ### Phased Requirements
 
 When splitting into phases:

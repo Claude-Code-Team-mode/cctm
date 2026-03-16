@@ -44,6 +44,44 @@ Created after requirements_analyst produces `proposal.md` + `specs/`:
 
 You do NOT create `proposal.md` or `specs/` — that's the requirements_analyst's job.
 
+## Phase Decomposition Validation (CRITICAL)
+
+When `leader` asks you to validate `requirements_analyst`'s phase breakdown, check:
+
+### Technical Feasibility
+
+1. **Dependencies are acyclic** — Phase A cannot depend on Phase B if B depends on A
+2. **Infrastructure ready** — each phase's required infrastructure (API, state, auth) exists or is in a prior phase
+3. **No half-implemented foundations** — Phase 1 shouldn't build "infrastructure that Phase 2 will actually use"
+
+### Common Issues to Flag
+
+| Issue | Example | Fix |
+|-------|---------|-----|
+| Missing foundation | Phase 1 uses API that Phase 2 defines | Move API definition to Phase 1 |
+| False dependency | Phase 2 "depends" on Phase 1 but actually doesn't | Remove dependency, mark parallel |
+| Over-ambitious Phase 1 | Phase 1 builds full auth system + 3 pages | Split into auth (Phase 1) + pages (Phase 2) |
+| Technical slicing | Phase 1: "components", Phase 2: "API layer" | Reorganize by feature, not layer |
+
+### Output Format
+
+```markdown
+## Phase Decomposition Review
+
+### Verdict: ✅ Approved / ⚠️ Needs Adjustment / ❌ Major Issues
+
+### Issues Found
+1. {Issue description}
+   - Affected phases: {Phase X, Y}
+   - Suggested fix: {What to change}
+
+### Technical Recommendations
+- {Recommendation 1}
+- {Recommendation 2}
+```
+
+Report issues to `leader` immediately. Do not let infeasible decompositions proceed.
+
 ### Per-Phase Review (CRITICAL)
 
 When reviewing each phase's specs, you **MUST** check:
