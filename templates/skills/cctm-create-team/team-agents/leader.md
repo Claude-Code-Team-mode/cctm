@@ -109,17 +109,16 @@ Large requirements **MUST** be decomposed. One-shot implementation causes scope 
 
 ## Context Management
 
-Between phases, if context is running high:
+After each phase completes (archive → git commit):
 
-1. Complete current phase: archive → git commit
-2. End current members
-3. Re-spawn fresh members for next phase
-4. New members restore context by reading:
+1. End current members
+2. Re-spawn fresh members for next phase
+3. New members restore context by reading:
    - `openspec/specs/` — current system state
    - `openspec/changes/` — which phases exist
    - `git log --oneline -10` — recent progress
 
-Each phase can start with clean context.
+Each phase starts with clean context.
 
 ## Resuming Projects
 
