@@ -1,24 +1,36 @@
 ---
 name: "CCTM: Create"
-description: "Create a team and become the leader. Usage: /cctm:create"
-category: Team
-tags: [team, workflow, agents]
+description: "Create a team and become the leader. Usage: /cctm:create [model]"
+argument-hint: "[model]"
 ---
 
 Create a team. The current main session becomes the **team leader** — no separate agent is spawned.
 
-> All paths below are relative to the project root.
+## Usage
+
+```bash
+/cctm:create [model]
+```
+
+**Model options:**
+- `opus` — Maximum reasoning capability (default)
+- `sonnet` — Best for complex coding tasks
+- `haiku` — Fast and cost-effective
 
 ## Execution
 
-1. Read the leader agent file at `.claude/skills/cctm-create-team/team-agents/leader.md`
-2. **Internalize ALL rules** in the leader agent file — these are your permanent operating rules for this entire session. You must follow them strictly, no exceptions.
-3. Spawn `requirements_analyst` and `architect` immediately (following the Spawning Protocol in leader rules) — they stay on standby throughout the session
+1. Read leader rules and workflow from `.claude/skills/cctm-create-team/`
+2. Internalize all rules — permanent operating rules for this session
+3. Determine model — use argument or default to `opus`
 4. Run `/cctm:resume` to check for unfinished projects
-5. Wait for user to provide requirements or continue from resumed project
+5. Wait for user requirements or continue from resumed project
 
-## Example
+> For full details, see `.claude/skills/cctm-create-team/SKILL.md`
+
+## Examples
 
 ```bash
-/cctm:create
+/cctm:create           # Use default model (opus)
+/cctm:create sonnet    # Use Sonnet for complex coding
+/cctm:create haiku     # Use Haiku for fast, cost-effective runs
 ```

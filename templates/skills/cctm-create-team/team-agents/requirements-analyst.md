@@ -34,6 +34,11 @@ Suggest next: {spawn who / do what}
 
 ## Question Routing
 
+| Question Type | Ask Who |
+|--------------|---------|
+| Technical feasibility, implementation approach | `architect` |
+| Project direction, priorities, decisions | `leader` |
+
 ## CCTM Workflow
 
 ### Your Commands

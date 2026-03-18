@@ -1,7 +1,7 @@
 import { Command } from 'commander'
 import { execSync } from 'node:child_process'
 import { resolve, join } from 'node:path'
-import { ensureDir, copyDir, getTemplatesDir, fileExists } from './utils.js'
+import { ensureDir, copyDir, getTemplatesDir, getSchemasDir, fileExists } from './utils.js'
 
 const program = new Command()
 
@@ -51,6 +51,12 @@ function runInit(targetPath: string, force: boolean): void {
     }
   }
 
+  // Copy CCTM schema to openspec/schemas/cctm/
+  const schemasDir = getSchemasDir()
+  const cctmSchemaSrc = join(schemasDir, 'cctm')
+  const cctmSchemaDest = join(openspecDir, 'schemas', 'cctm')
+  const schemaResult = copyDir(cctmSchemaSrc, cctmSchemaDest, force)
+
   const templatesDir = getTemplatesDir()
 
   const skillsSrc = join(templatesDir, 'skills')
@@ -61,8 +67,8 @@ function runInit(targetPath: string, force: boolean): void {
   const commandsDest = join(claudeDir, 'commands', 'cctm')
   const commandsResult = copyDir(commandsSrc, commandsDest, force)
 
-  const allCopied = [...skillsResult.copied, ...commandsResult.copied]
-  const allSkipped = [...skillsResult.skipped, ...commandsResult.skipped]
+  const allCopied = [...schemaResult.copied, ...skillsResult.copied, ...commandsResult.copied]
+  const allSkipped = [...schemaResult.skipped, ...skillsResult.skipped, ...commandsResult.skipped]
 
   if (allCopied.length > 0) {
     console.log(`\nCopied ${allCopied.length} file(s):`)

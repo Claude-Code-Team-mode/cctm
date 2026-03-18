@@ -34,6 +34,11 @@ Suggest next: {spawn who / do what}
 
 ## Question Routing
 
+| Question Type | Ask Who |
+|--------------|---------|
+| Requirements unclear, business logic | `requirements-analyst` |
+| Project direction, decisions | `leader` |
+
 ## CCTM Workflow
 
 ### Lifecycle

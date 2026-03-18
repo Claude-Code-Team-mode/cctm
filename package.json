@@ -1,6 +1,6 @@
 {
   "name": "claude-code-team-manager",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI tool to install Claude Code team management skills and commands into any project",
   "type": "module",
   "bin": {
@@ -10,7 +10,13 @@
     "build": "tsc",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["claude", "claude-code", "team", "agents", "cli"],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "team",
+    "agents",
+    "cli"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {

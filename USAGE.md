@@ -23,6 +23,7 @@ cctm init
 - 自动检测并安装 OpenSpec（如果没有）
 - 自动初始化 OpenSpec（如果项目没有 `openspec/` 目录）
 - 将 CCTM 模板复制到 `.claude/` 目录
+- 将 CCTM schema 复制到 `openspec/schemas/cctm/`
 
 ### 2. 在 Claude Code 中创建团队
 
@@ -32,7 +33,6 @@ cctm init
 
 执行后：
 - 你（主会话）成为 **Team Leader**
-- 自动启动 `requirements_analyst` 和 `architect` 并待命
 - 自动检查是否有未完成的项目
 
 ### 3. 提出需求
@@ -42,6 +42,20 @@ cctm init
 ```
 帮我做一个登录页面，包含邮箱密码登录和 GitHub OAuth
 ```
+
+## CCTM 命令 (独立命名空间)
+
+CCTM 使用独立命令前缀 `/cctm:*`，便于区分团队工作流与常规 OpenSpec 使用：
+
+| CCTM 命令 | 等价于 | 用途 |
+|-----------|--------|------|
+| `/cctm:new` | `/opsx:new --schema cctm` | 创建新变更 |
+| `/cctm:continue` | `/opsx:continue` | 创建下一个 artifact |
+| `/cctm:apply` | `/opsx:apply` | 实现任务 |
+| `/cctm:verify` | `/opsx:verify` | 验证实现 |
+| `/cctm:archive` | `/opsx:archive` | 归档变更 |
+
+**所有变更统一存储在 `openspec/changes/`，便于查看进度。**
 
 ## 完整工作流
 
@@ -55,23 +69,24 @@ Leader → 需求分析师：细化需求、拆分阶段
 Leader：决定阶段执行顺序（并行/串行）
     │
     ▼
-每个阶段（= 一个 OPSX change）：
+每个阶段（= 一个 CCTM change）：
     │
-    ├─ 需求分析师：/opsx:propose
-    │    → proposal.md（意图、范围）
-    │    → specs/（Given/When/Then 场景）
+    ├─ 需求分析师：
+    │    → /cctm:new "{阶段名}"
+    │    → /cctm:continue (proposal.md)
+    │    → /cctm:continue (specs/)
     │
-    ├─ 架构师：审查 specs + 创建设计
-    │    → design.md（技术方案）
-    │    → tasks.md（TDD 任务清单）
+    ├─ 架构师：
+    │    → /cctm:continue (design.md)
+    │    → /cctm:continue (tasks.md)
     │
-    ├─ 工程师：/opsx:apply（按需启动）
+    ├─ 工程师：/cctm:apply（按需启动）
     │    → TDD 开发（RED → GREEN → REFACTOR）
     │
-    ├─ 工程师：/opsx:verify
+    ├─ 工程师：/cctm:verify
     │    → 验证实现是否匹配 specs
     │
-    ├─ 工程师：/opsx:archive
+    ├─ 架构师：/cctm:archive
     │    → 合并 delta specs
     │
     ├─ Leader：评审质量
@@ -87,15 +102,25 @@ Leader：决定阶段执行顺序（并行/串行）
 | 命令 | 说明 |
 |------|------|
 | `/cctm:create` | 创建团队，主会话成为 Leader |
-| `/cctm:resume` | 恢复未完成项目（扫描 OPSX artifacts + git history） |
+| `/cctm:resume` | 恢复未完成项目（扫描 openspec/cctm/ + git history） |
+
+## CCTM 工作流命令
+
+| 命令 | 说明 | 使用者 |
+|------|------|--------|
+| `/cctm:new` | 创建新变更目录 | 需求分析师 |
+| `/cctm:continue` | 创建下一个 artifact | 需求分析师/架构师 |
+| `/cctm:apply` | 实现 tasks.md 中的任务 | 工程师 |
+| `/cctm:verify` | 验证实现匹配 specs | 工程师 |
+| `/cctm:archive` | 归档已完成的变更 | 架构师 |
 
 ## 团队角色
 
 | 角色 | 职责 | 何时工作 |
 |------|------|----------|
 | **Leader**（你） | 派发任务、评审质量、做决策 | 全程 |
-| 需求分析师 | 细化需求、拆分阶段、写 specs | 启动时待命，按需调用 |
-| 架构师 | 技术方案、接口设计、任务拆分 | 启动时待命，按需调用 |
+| 需求分析师 | 细化需求、拆分阶段、写 specs | 按需启动 |
+| 架构师 | 技术方案、接口设计、任务拆分 | 每阶段启动 |
 | 工程师 | TDD 开发、实现代码 | 按需启动 |
 
 ## 阶段状态判断
@@ -112,11 +137,12 @@ Leader：决定阶段执行顺序（并行/串行）
 
 ## 核心原则
 
-1. **小阶段** — 一个需求拆成多个小 OPSX change，不做大而全
+1. **小阶段** — 一个需求拆成多个小 CCTM change，不做大而全
 2. **流式迭代** — 实现过程中发现设计有误，随时更新 artifact 继续
-3. **验证先归档** — `/opsx:verify` 在归档前捕获偏差
+3. **验证先归档** — `/cctm:verify` 在归档前捕获偏差
 4. **每阶段 commit** — 创建还原点，方便回滚
-5. **OPSX artifact 是唯一状态源** — 不需要单独的进度追踪
+5. **CCTM artifact 是唯一状态源** — 不需要单独的进度追踪
+6. **独立命令** — 使用 `/cctm:*` 命令区分团队工作流
 
 ## 自定义
 

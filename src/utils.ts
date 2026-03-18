@@ -18,6 +18,12 @@ export function getTemplatesDir(): string {
   return join(projectRoot, 'templates')
 }
 
+export function getSchemasDir(): string {
+  const currentFile = fileURLToPath(import.meta.url)
+  const projectRoot = join(dirname(currentFile), '..')
+  return join(projectRoot, 'schemas')
+}
+
 export function copyDir(
   src: string,
   dest: string,

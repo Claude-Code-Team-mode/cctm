@@ -1,0 +1,111 @@
+name: cctm
+version: 1
+description: CCTM team workflow with role separation - requirements-analyst creates proposal + specs, architect creates design + tasks.
+
+# Global context injected into all artifacts
+context: |
+  You are part of a multi-agent team (CCTM).
+  - requirements-analyst: Creates proposal.md + specs/ (WHAT to build)
+  - architect: Creates design.md + tasks.md (HOW to build)
+  - engineer: Implements code via /cctm:apply
+  - leader: Coordinates and reviews
+
+  Tech stack: React, TypeScript, Vite, Vitest, TailwindCSS
+  Quality: 80%+ test coverage, TDD workflow
+
+# Artifacts define the workflow phases
+artifacts:
+  # === Requirements Analyst Phase ===
+  - id: proposal
+    generates: proposal.md
+    description: |
+      WHY this change is needed.
+      Created by requirements-analyst.
+      Establishes motivation, scope, and impact.
+    template: proposal.md
+    instruction: |
+      You are the requirements-analyst. Create a proposal that explains:
+      1. WHY this change is needed (motivation, problem, timing)
+      2. WHAT changes (new capabilities, modifications, removals)
+      3. IMPACT (affected systems, dependencies)
+
+      Use clear business language. Do NOT include technical implementation details.
+
+  - id: specs
+    generates: specs/**/*.md
+    requires: [proposal]
+    description: |
+      WHAT the system should do.
+      Created by requirements-analyst.
+      Defines requirements with Given/When/Then scenarios.
+    template: spec.md
+    instruction: |
+      You are the requirements-analyst. Create specs that define:
+      1. ADDED requirements with kebab-case capability names
+      2. MODIFIED requirements for existing capabilities
+      3. REMOVED requirements for deprecated capabilities
+
+      Format requirements:
+      - Use SHALL/MUST for normative requirements
+      - Each scenario: `#### Scenario: <name>` (exactly 4 hashtags)
+      - Use GIVEN/WHEN/THEN format
+
+      Do NOT include technical implementation details. That's the architect's job.
+
+  # === Architect Phase ===
+  - id: design
+    generates: design.md
+    requires: [specs]
+    description: |
+      HOW to implement the change.
+      Created by architect.
+      Technical approach, architecture decisions, data flow.
+    template: design.md
+    instruction: |
+      You are the architect. Create a design that explains:
+      1. CONTEXT (background, current state)
+      2. GOALS/NON-GOALS (scope boundaries)
+      3. DECISIONS (key design choices with rationale)
+        - Include ADR (Architecture Decision Record) for non-trivial choices
+      4. RISKS/TRADE-OFFS (known limitations)
+
+      Reference the specs/ for requirements. Ensure design aligns with all scenarios.
+
+  - id: tasks
+    generates: tasks.md
+    requires: [specs, design]
+    description: |
+      TDD implementation checklist.
+      Created by architect.
+      Tracks implementation work with file boundaries.
+    template: tasks.md
+    instruction: |
+      You are the architect. Create TDD-friendly tasks:
+      1. Group tasks by feature/module (## 1. Group Name)
+      2. Each task MUST be a checkbox: `- [ ] X.Y Task description`
+      3. Include test scenarios for each task
+      4. Specify file ownership:
+         - Owner: which engineer (engineer-1, engineer-2, etc.)
+         - Files: exclusive files this engineer owns
+         - Shared: read-only files (types/, constants/, utils/)
+
+# Apply phase - engineer implementation
+apply:
+  requires: [tasks]
+  tracks: tasks.md
+  instruction: |
+    You are the engineer. Implement the tasks:
+    1. Read proposal.md, specs/, design.md, tasks.md for context
+    2. Follow TDD: write test first (RED), implement (GREEN), refactor
+    3. Mark tasks complete: `- [x] X.Y Task description`
+    4. Update artifacts if implementation reveals issues
+    5. Maintain 80%+ test coverage
+
+# Archive phase - merge delta specs
+archive:
+  requires: [tasks]
+  instruction: |
+    Archive this change:
+    1. Verify all tasks are complete
+    2. Merge delta specs (specs/ADDED → main specs)
+    3. Update baseline for next phase
