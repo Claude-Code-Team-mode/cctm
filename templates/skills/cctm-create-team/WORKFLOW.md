@@ -56,13 +56,21 @@ The schema dependency graph ensures:
 
 **Executor-Driven:** Members report + suggest next step after completing tasks. Leader just executes suggestions.
 
+**Note:** `requirements-analyst` spawns at team creation and stays on standby.
+
 ```
+Team Creation:
+    │
+    ├─ Leader: /cctm:create
+    ├─ Leader: spawn requirements-analyst (stays on standby)
+    ├─ Leader: /cctm:resume (check unfinished projects)
+    └─ Wait for user requirements
+    │
+    ▼
 Requirements Analysis Phase:
     │
-    ├─ Leader: spawn requirements-analyst
-    ├─ requirements-analyst: refine + split phases
+    ├─ requirements-analyst: receive requirement → refine + split phases
     ├─ requirements-analyst → Leader: "Task done: phase breakdown. Suggest: spawn architect to validate feasibility"
-    └─ requirements-analyst → shutdown
     │
     ▼
     ├─ Leader: spawn architect
@@ -74,11 +82,9 @@ Requirements Analysis Phase:
 Leader: confirm execution order with user
     │
     ▼
-    ├─ Leader: spawn requirements-analyst
     ├─ requirements-analyst: create ALL phases
     │    → /cctm:new → /cctm:continue → /cctm:continue (per phase)
     ├─ requirements-analyst → Leader: "Task done: all phases created. Suggest: start Phase 1"
-    └─ requirements-analyst → shutdown
     │
     ▼
 Each Phase:
@@ -105,12 +111,10 @@ Each Phase:
     ▼
 Next phase
 
-Requirement Changes:
+Requirement Changes (requirements-analyst already on standby):
     │
-    ├─ Leader: spawn requirements-analyst
     ├─ requirements-analyst: assess impact + update specs
-    ├─ requirements-analyst → Leader: "Task done: change assessment. Suggest: {based on results}"
-    └─ requirements-analyst → shutdown
+    └─ requirements-analyst → Leader: "Task done: change assessment. Suggest: {based on results}"
 ```
 
 ## Requirement Changes
@@ -148,7 +152,7 @@ Leader: decision → proceed
 | Role | Creates | Lifecycle |
 |------|---------|-----------|
 | Leader (main session) | Quality review, phase coordination | Entire session |
-| Requirements Analyst | `proposal.md` + `specs/` | Spawn on-demand, shutdown after task |
+| Requirements Analyst | `proposal.md` + `specs/` | Spawns at team creation, stays on standby |
 | Architect | `design.md` + `tasks.md`, review, archive | Spawn per-phase, shutdown after archive |
 | Engineer(s) | Code implementation | Spawn on-demand, shutdown after task |
 

@@ -178,26 +178,45 @@ Phase 1 已归档后，用户要求修改 Phase 1 需求，会影响依赖它的
 
 **问题描述**:
 USAGE.md 多处描述与新流程不一致：
-- 行36: "启动时待命" → 应为"按需启动"
 - 行90, 116: engineer 归档 → 应为 architect 归档
-- 行123-124: 角色"启动时待命" → 应为"按需启动"
+- 角色"启动时待命" vs "按需启动" 描述不一致
 
 **解决方案**:
-更新所有不一致的描述，确保与当前流程一致。
+更新所有不一致的描述，确保与当前流程一致。requirements-analyst 改为"启动时待命"（Issue #18）。
+
+### Issue #18: 团队启动时默认成员
+
+**优先级**: P0
+**状态**: ✅ 已解决
+**发现时间**: 2026-03-19
+
+**问题描述**:
+团队创建时没有默认启动任何成员，导致"团队启动不成功"。用户需要手动启动 requirements-analyst 才能开始工作。
+
+**解决方案**:
+修改默认行为：`/cctm:create` 时自动 spawn `requirements-analyst` 并保持待命，用户可以立即提出需求。
+
+| Agent | 原流程 | 新流程 |
+|-------|--------|--------|
+| requirements-analyst | 按需 spawn | 启动时 spawn，保持待命 |
+| architect | 按需 spawn | 保持不变 |
+| engineer | 按需 spawn | 保持不变 |
 
 ### Issue #8: Agent 生命周期与上下文管理
 
 **解决时间**: 2026-03-18
 
+**更新时间**: 2026-03-19
+
 **问题描述**:
 原流程在 `/cctm:create` 时就 spawn requirements-analyst 和 architect 并全程待命，会导致上下文累积。
 
 **解决方案**:
-修改为按需 spawn，用完 shutdown：
+修改为按需 spawn，用完 shutdown（后因 Issue #18 调整 requirements-analyst 为启动时 spawn）：
 
-| Agent | 原流程 | 新流程 |
-|-------|--------|--------|
-| requirements-analyst | 启动时 spawn，全程待命 | 按需 spawn，任务后 shutdown |
+| Agent | 原流程 | 调整后流程 |
+|-------|--------|-----------|
+| requirements-analyst | 启动时 spawn，全程待命 | **启动时 spawn，全程待命**（Issue #18 恢复） |
 | architect | 启动时 spawn，全程待命 | 每阶段 spawn，归档后 shutdown |
 | engineer | 按需 spawn | ✅ 保持不变 |
 

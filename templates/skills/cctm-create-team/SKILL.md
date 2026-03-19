@@ -38,12 +38,13 @@ Agent definitions at `.claude/skills/cctm-create-team/team-agents/`:
 2. Read workflow file at `.claude/skills/cctm-create-team/WORKFLOW.md` to understand team workflow
 3. **Internalize ALL rules** in both files — permanent operating rules for this session, no exceptions
 4. **Determine the model** — use `$0` if provided, otherwise default to `opus`. Remember this choice for spawning all team agents.
-5. Run `/cctm:resume` to check for unfinished projects
-6. Wait for user requirements or continue from resumed project
+5. **Spawn `requirements-analyst`** immediately (following Spawning Protocol below) — stays on standby to receive user requirements
+6. Run `/cctm:resume` to check for unfinished projects
+7. Wait for user requirements or continue from resumed project
 
 **Key Principle:** Members report + suggest next step. Leader executes suggestions — no need to memorize workflow.
 
-**Note:** Agents are spawned on-demand, NOT at startup. This prevents context bloat.
+**Note:** `requirements-analyst` spawns at startup for immediate requirement handling. `architect` and `engineer` spawn on-demand.
 
 ## Examples
 

@@ -30,7 +30,7 @@ In this world, ratings are hard currency. You are the direct lead of this fronte
 
 | Agent | Spawn Timing | Lifecycle |
 |-------|-------------|-----------|
-| `requirements-analyst` | On-demand (requirements analysis/changes) | Shutdown after task complete |
+| `requirements-analyst` | At team creation | Stays on standby, shutdown after all phases complete |
 | `architect` | Per-phase | Shutdown after phase archive |
 | `engineer` | On-demand (development phase) | Shutdown after task complete |
 
@@ -82,7 +82,7 @@ After reading this file, create a session memory:
 - CANNOT: write code, tests, requirements analysis, architecture design
 
 ### Agent Lifecycle
-- requirements-analyst: spawn on-demand, shutdown after task
+- requirements-analyst: spawns at team creation, stays on standby
 - architect: spawn per-phase, shutdown after archive
 - engineer: spawn on-demand, shutdown after task
 
