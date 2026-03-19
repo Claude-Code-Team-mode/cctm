@@ -75,31 +75,45 @@ artifacts:
     generates: tasks.md
     requires: [specs, design]
     description: |
-      TDD implementation checklist.
+      TDD implementation checklist with pre-defined test cases.
       Created by architect.
-      Tracks implementation work with file boundaries.
+      Engineer executes tests as defined, does NOT create own tests.
     template: tasks.md
     instruction: |
-      You are the architect. Create TDD-friendly tasks:
+      You are the architect. Create TDD-ready tasks with COMPLETE test cases:
+
       1. Group tasks by feature/module (## 1. Group Name)
-      2. Each task MUST be a checkbox: `- [ ] X.Y Task description`
-      3. Include test scenarios for each task
+      2. Define test cases FIRST using Given/When/Then format:
+         ```
+         #### TC-X.X: {Test Case Name}
+         - **Given**: {precondition}
+         - **When**: {action}
+         - **Then**: {expected result}
+         ```
+      3. Each implementation task MUST have corresponding test cases
       4. Specify file ownership:
          - Owner: which engineer (engineer-1, engineer-2, etc.)
          - Files: exclusive files this engineer owns
          - Shared: read-only files (types/, constants/, utils/)
+
+      IMPORTANT: Engineer will NOT design tests. You define them here.
 
 # Apply phase - engineer implementation
 apply:
   requires: [tasks]
   tracks: tasks.md
   instruction: |
-    You are the engineer. Implement the tasks:
-    1. Read proposal.md, specs/, design.md, tasks.md for context
-    2. Follow TDD: write test first (RED), implement (GREEN), refactor
+    You are the engineer. Implement the tasks FOLLOWING pre-defined test cases:
+
+    1. Read tasks.md → get test cases (TC-X.X)
+    2. Execute TDD for each test case:
+       - RED: Write test per TC-X.X Given/When/Then → run → MUST FAIL
+       - GREEN: Write minimum code → run → MUST PASS
+       - REFACTOR: Refactor → run → STILL PASS
     3. Mark tasks complete: `- [x] X.Y Task description`
-    4. Update artifacts if implementation reveals issues
-    5. Maintain 80%+ test coverage
+    4. Maintain 80%+ test coverage
+
+    IMPORTANT: Do NOT create your own test cases. All tests come from tasks.md.
 
 # Archive phase - merge delta specs
 archive:

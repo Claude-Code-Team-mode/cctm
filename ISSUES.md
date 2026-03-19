@@ -229,6 +229,26 @@ USAGE.md 多处描述与新流程不一致：
 | architect | 按"需求"spawn | **明确指定 phase name**，该 phase 完成后 shutdown |
 | engineer | 按"需求"spawn | **明确指定 phase name**，与 architect 绑定为 phase team |
 
+### Issue #20: TDD 测试用例应在设计阶段定义
+
+**优先级**: P1
+**状态**: ✅ 已解决
+**发现时间**: 2026-03-19
+
+**问题描述**:
+原流程让 Engineer 在开发时自己设计测试用例，而不是按预定义的测试用例执行。这违背了"文档驱动开发"的理念。
+
+**用户期望**:
+- Architect 在 tasks.md 中定义完整测试用例（Given/When/Then）
+- Engineer 只需按文档执行测试，不自创测试用例
+- 测试用例成为"规范"，确保测试质量和覆盖率在设计阶段就确定
+
+**解决方案**:
+1. 更新 tasks.md 模板 - 使用 Given/When/Then 格式定义测试用例
+2. 更新 architect.md - 明确要求定义完整测试用例
+3. 更新 engineer.md - 强调"不自创测试，按文档执行"
+4. 更新 schema.yaml - 同步 apply instruction
+
 ### Issue #8: Agent 生命周期与上下文管理
 
 **解决时间**: 2026-03-18

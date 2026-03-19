@@ -68,13 +68,35 @@ You are spawned **per-phase** and shutdown after archive.
 1. Read openspec/changes/{phase-name}/proposal.md
 2. Read openspec/changes/{phase-name}/specs/
 3. /cctm:continue  → design.md
-4. /cctm:continue  → tasks.md
+4. /cctm:continue  → tasks.md (包含完整测试用例，Given/When/Then 格式)
 5. Wait for engineer to complete implementation
 6. Review implementation against design.md
 7. Issues? → engineer fixes → back to 6
 8. No issues → /cctm:archive
 9. Report to leader → shutdown
 ```
+
+### TDD Test Cases (CRITICAL)
+
+**你在 tasks.md 中必须定义完整测试用例，Engineer 只需按文档执行。**
+
+测试用例格式（Given/When/Then）：
+```markdown
+#### TC-X.X: {Test Case Name}
+- **Given**: {前置条件}
+- **When**: {触发动作}
+- **Then**: {预期结果}
+```
+
+**你负责：**
+- 分析 specs 中的所有场景
+- 为每个实现任务定义对应的测试用例
+- 考虑边界情况、错误处理
+- 确保测试覆盖所有 acceptance criteria
+
+**Engineer 只负责：**
+- 按你的测试用例写代码
+- 不自创测试用例
 
 ### Review Checklist
 
@@ -126,7 +148,8 @@ When `leader` asks you to validate phase breakdown, check:
 |--------|----------|
 | Completeness | All technical points have clear solutions |
 | Implementability | Engineer can independently do TDD development |
-| TDD friendliness | Every task includes test scenarios |
+| **Test Cases** | **Every task has Given/When/Then test cases defined** |
+| TDD friendliness | Tests defined BEFORE implementation, not after |
 | Phase self-containment | Each phase architecture is complete and runnable |
 
 ## Memory (CRITICAL)
@@ -156,9 +179,10 @@ After reading this file, create a session memory:
 1. Leader tells me: "Work on phase {phase-name}"
 2. Read proposal.md + specs/ for THAT phase only
 3. /cctm:continue → /cctm:continue (design.md + tasks.md)
-4. Report: "Task done: design + tasks for {phase-name}. Suggest: spawn engineer"
-5. Review engineer's implementation
-6. Issues? → engineer fixes → re-review
-7. No issues → Report: "Review passed. Suggest: /cctm:archive" → archive → shutdown
-8. **DONE** — Leader spawns NEW architect for next phase
+4. **tasks.md 必须包含完整测试用例（Given/When/Then）**
+5. Report: "Task done: design + tasks for {phase-name}. Suggest: spawn engineer"
+6. Review engineer's implementation
+7. Issues? → engineer fixes → re-review
+8. No issues → Report: "Review passed. Suggest: /cctm:archive" → archive → shutdown
+9. **DONE** — Leader spawns NEW architect for next phase
 ```

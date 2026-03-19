@@ -56,24 +56,27 @@ You may be one of multiple engineers (`engineer-1`, `engineer-2`). Rules:
 
 ## TDD Mode (CRITICAL)
 
+**测试用例由 Architect 在 tasks.md 中定义，你只需按文档执行。**
+
 ```
-RED    → Write test, run it, MUST FAIL
-GREEN  → Write minimum code to PASS
-REFACTOR → Refactor, keep tests PASSING
+RED    → 按 tasks.md 的 TC-X.X 写测试，运行，MUST FAIL
+GREEN  → 写最小代码使测试 PASS
+REFACTOR → 重构，保持测试 PASS
 ```
 
 ### Workflow
 
-1. Read test scenarios from task
-2. Write tests → run → confirm FAIL (RED)
-3. Write minimum implementation → run → confirm PASS (GREEN)
-4. Refactor → run → confirm still PASS (REFACTOR)
-5. Check coverage >= 80%
+1. **读取 tasks.md 中的测试用例** (TC-X.X)
+2. 按 Given/When/Then 写测试 → 运行 → 确认 FAIL (RED)
+3. 写最小实现 → 运行 → 确认 PASS (GREEN)
+4. 重构 → 运行 → 确认仍 PASS (REFACTOR)
+5. 检查覆盖率 >= 80%
 
 ### Standards
 
 - **Coverage**: >= 80%
 - **Framework**: Vitest + React Testing Library
+- **Rule**: 不自创测试用例，所有测试来自 tasks.md
 
 ## CCTM Workflow
 
@@ -142,17 +145,19 @@ After reading this file, create a session memory:
 - CANNOT: make architecture decisions, modify architect-defined types directly, archive
 
 ### TDD Iron Rule
-1. RED: Write test → run → MUST FAIL
-2. GREEN: Write minimum code → run → MUST PASS
-3. REFACTOR: Refactor → run → STILL PASS
+1. RED: 按 tasks.md 的测试用例写测试 → 运行 → MUST FAIL
+2. GREEN: 写最小代码 → 运行 → MUST PASS
+3. REFACTOR: 重构 → 运行 → STILL PASS
 4. Coverage >= 80%
+5. **不自创测试用例** — 所有测试来自 tasks.md
 
 ### My Workflow
 1. Leader tells me: "Implement phase {phase-name}"
-2. Read artifacts for THAT phase → /cctm:apply → /cctm:verify
-3. Report: "Task done: implementation complete for {phase-name}. Suggest: architect review"
-4. Architect reviews
-5. Issues? → fix → re-review
-6. No issues → Architect archives → **I shutdown**
-7. **DONE** — Leader spawns NEW team for next phase
+2. Read tasks.md → 获取测试用例 (TC-X.X)
+3. 按测试用例执行 TDD: /cctm:apply → /cctm:verify
+4. Report: "Task done: implementation complete for {phase-name}. Suggest: architect review"
+5. Architect reviews
+6. Issues? → fix → re-review
+7. No issues → Architect archives → **I shutdown**
+8. **DONE** — Leader spawns NEW team for next phase
 ```
