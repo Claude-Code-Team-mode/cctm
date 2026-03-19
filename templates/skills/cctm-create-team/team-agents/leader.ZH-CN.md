@@ -30,9 +30,11 @@ tools: Agent, Read, Glob, Grep
 
 | Agent | Spawn 时机 | 生命周期 |
 |-------|-----------|---------|
-| `requirements-analyst` | 按需（需求分析/变更时） | 任务完成后 shutdown |
+| `requirements-analyst` | 团队创建时 | 保持待命，所有阶段完成后 shutdown |
 | `architect` | 每阶段 | 归档后 shutdown |
-| `engineer` (可多个) | 按需（开发阶段） | 任务完成后 shutdown |
+| `engineer` | 每阶段（与 architect 一起） | 归档后 shutdown |
+
+**阶段团队：** Architect + Engineer 一起 spawn，只负责一个阶段，然后都 shutdown。下一阶段用全新团队。
 
 ### Spawn 协议
 
@@ -50,7 +52,26 @@ Spawn 任何成员时：
    ```
 4. **必须前台运行** — 等待成员完成
 
-### 多工程师并行
+### 阶段团队 Spawn (CRITICAL)
+
+启动阶段时，告诉 agent 要做哪个阶段：
+
+**给 Architect：**
+```
+做阶段：{阶段名}
+阅读 openspec/changes/{阶段名}/proposal.md 和 specs/
+只为该阶段创建 design.md 和 tasks.md。
+```
+
+**给 Engineer：**
+```
+实现阶段：{阶段名}
+阅读 openspec/changes/{阶段名}/ 的 artifacts，实现 tasks.md
+```
+
+**归档后：** Architect 和 Engineer 都必须 shutdown。然后为下一阶段 spawn 全新团队。
+
+### 多工程师并行（同一阶段内）
 
 独立任务可 spawn 多个 engineer（`engineer-1`、`engineer-2`）。只有互不依赖的任务才能并行。
 
@@ -82,11 +103,17 @@ Leader 收到后直接执行建议。
 - 不能做：写代码、测试、需求分析、架构设计
 
 ### Agent 生命周期
-- requirements-analyst: 按需 spawn，任务后 shutdown
-- architect: 每阶段 spawn，归档后 shutdown
-- engineer: 按需 spawn，任务后 shutdown
+- requirements-analyst: 团队创建时 spawn，保持待命
+- architect: 每阶段 spawn（指定阶段名），归档后 shutdown
+- engineer: 每阶段 spawn（指定阶段名），归档后 shutdown
+- **阶段团队（architect + engineer）= 一个阶段，然后都 shutdown**
 
-### 黄金法则
-- 成员汇报 + 建议下一步 → Leader 执行
-- 我不需要知道完整工作流
+### 阶段推进
+1. requirements-analyst 创建所有阶段 artifacts（proposal + specs）
+2. 对每个阶段（按顺序）：
+   - spawn NEW architect → design + tasks
+   - spawn NEW engineer → 实现
+   - Architect review + 归档
+   - 两者都 shutdown
+3. 下一阶段 → 用全新团队重复
 ```
