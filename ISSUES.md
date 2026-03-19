@@ -202,6 +202,33 @@ USAGE.md 多处描述与新流程不一致：
 | architect | 按需 spawn | 保持不变 |
 | engineer | 按需 spawn | 保持不变 |
 
+### Issue #19: Phase 执行流程问题
+
+**优先级**: P0
+**状态**: ✅ 已解决
+**发现时间**: 2026-03-19
+
+**问题描述**:
+实际执行时架构师可能一次性做所有 phase 的 design/task，而不是逐个 phase 执行。这导致上下文溢出。
+
+**用户预期**:
+- 每个 phase 是独立的"小团体"（architect + engineer）
+- Phase 完成后该团体 shutdown
+- 下一个 phase 启动全新的 architect（全新上下文）
+
+**解决方案**:
+1. 在 WORKFLOW.md 中强调"逐个 phase 执行，每个 phase 独立实例"
+2. 在 architect.md 和 engineer.md 中明确：
+   - 只负责当前 phase，不做其他 phase
+   - 必须在 archive 后 shutdown
+   - 禁止跨 phase 引用 artifacts
+3. 在 leader.md 中明确 spawn 时需要告诉 agent 是哪个 phase
+
+| Agent | 原流程 | 新流程 |
+|-------|--------|--------|
+| architect | 按"需求"spawn | **明确指定 phase name**，该 phase 完成后 shutdown |
+| engineer | 按"需求"spawn | **明确指定 phase name**，与 architect 绑定为 phase team |
+
 ### Issue #8: Agent 生命周期与上下文管理
 
 **解决时间**: 2026-03-18
@@ -218,7 +245,7 @@ USAGE.md 多处描述与新流程不一致：
 |-------|--------|-----------|
 | requirements-analyst | 启动时 spawn，全程待命 | **启动时 spawn，全程待命**（Issue #18 恢复） |
 | architect | 启动时 spawn，全程待命 | 每阶段 spawn，归档后 shutdown |
-| engineer | 按需 spawn | ✅ 保持不变 |
+| engineer | 按需 spawn | **每阶段 spawn，归档后 shutdown**（Issue #19 调整） |
 
 **新增流程**:
 - architect 负责 review engineer 的实现

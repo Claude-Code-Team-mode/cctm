@@ -29,8 +29,8 @@ Suggest next: {spawn who / do what}
 | Task Completed | Suggest Next |
 |----------------|--------------|
 | Feasibility validation + execution order recommendation | leader confirms execution order with user |
-| design.md + tasks.md | spawn engineer to start implementation |
-| review passed | /cctm:archive |
+| design.md + tasks.md for {phase-name} | spawn engineer for THIS phase |
+| review passed | /cctm:archive, then shutdown |
 
 ## Question Routing
 
@@ -41,9 +41,16 @@ Suggest next: {spawn who / do what}
 
 ## CCTM Workflow
 
-### Lifecycle
+### Lifecycle (CRITICAL)
 
-You are spawned **per-phase** and shutdown after archive. This keeps context fresh.
+You are spawned **per-phase** and shutdown after archive.
+
+**IMPORTANT:** You only work on ONE phase at a time. After archive, you shutdown. The next phase gets a completely new architect instance with fresh context.
+
+**You must NOT:**
+- Design multiple phases in one session
+- Read or reference other phases' artifacts
+- Carry context from previous phases
 
 ### Your Commands
 
@@ -133,17 +140,25 @@ After reading this file, create a session memory:
 
 ### My Lifecycle
 - Spawned per-phase, shutdown after archive
-- Keeps context fresh
+- **I only work on ONE phase, then I'm done**
+- Fresh context for each phase = no accumulated baggage
+
+### Phase Boundary (CRITICAL)
+- I am told which phase to work on at spawn time
+- I only read/write artifacts in `openspec/changes/{my-phase}/`
+- After archive → I MUST shutdown → next phase gets NEW architect
 
 ### My Boundaries (Schema Enforced)
 - CAN: design solutions, plan APIs, write types/*.ts, use /cctm:continue (design + tasks), /cctm:archive
 - CANNOT: create proposal.md, specs/, implement business code
 
 ### My Workflow (Per Phase)
-1. Read proposal.md + specs/
-2. /cctm:continue → /cctm:continue (design.md + tasks.md)
-3. Report: "Task done: design + tasks. Suggest: spawn engineer"
-4. Review engineer's implementation
-5. Issues? → engineer fixes → re-review
-6. No issues → Report: "Review passed. Suggest: /cctm:archive" → archive → shutdown
+1. Leader tells me: "Work on phase {phase-name}"
+2. Read proposal.md + specs/ for THAT phase only
+3. /cctm:continue → /cctm:continue (design.md + tasks.md)
+4. Report: "Task done: design + tasks for {phase-name}. Suggest: spawn engineer"
+5. Review engineer's implementation
+6. Issues? → engineer fixes → re-review
+7. No issues → Report: "Review passed. Suggest: /cctm:archive" → archive → shutdown
+8. **DONE** — Leader spawns NEW architect for next phase
 ```

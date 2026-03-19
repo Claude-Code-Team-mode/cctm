@@ -87,15 +87,16 @@ Leader: confirm execution order with user
     ├─ requirements-analyst → Leader: "Task done: all phases created. Suggest: start Phase 1"
     │
     ▼
-Each Phase:
+Each Phase (独立实例，逐个执行):
     │
-    ├─ Leader: spawn architect (new instance)
+    ├─ Leader: spawn architect (NEW instance for this phase only)
+    ├─ architect: read proposal.md + specs/ for THIS phase only
     ├─ architect: /cctm:continue → design.md
     ├─ architect: /cctm:continue → tasks.md
-    ├─ architect → Leader: "Task done: design + tasks. Suggest: spawn engineer"
+    ├─ architect → Leader: "Task done: design + tasks for {phase-name}. Suggest: spawn engineer"
     │
-    ├─ Leader: spawn engineer (new instance)
-    ├─ engineer: /cctm:apply → TDD implementation
+    ├─ Leader: spawn engineer (NEW instance for this phase only)
+    ├─ engineer: /cctm:apply → TDD implementation for THIS phase
     ├─ engineer: /cctm:verify
     ├─ engineer → Leader: "Task done: implementation complete. Suggest: architect review"
     │
@@ -104,12 +105,12 @@ Each Phase:
     ├─ architect → Leader: "Review passed. Suggest: /cctm:archive"
     ├─ architect: /cctm:archive
     │
-    ├─ engineer → shutdown
-    ├─ architect → shutdown
+    ├─ engineer → shutdown (phase team dissolved)
+    ├─ architect → shutdown (phase team dissolved)
     └─ git commit
     │
     ▼
-Next phase
+Leader: spawn NEW architect for NEXT phase (fresh context)
 
 Requirement Changes (requirements-analyst already on standby):
     │
@@ -141,6 +142,7 @@ Leader: decision → proceed
 ## Key Principles
 
 - **Small phases** — decompose aggressively, one OPSX change per phase
+- **Phase isolation** — each phase gets a FRESH architect + engineer team, no context carryover
 - **Foreground execution** — all members run in foreground, Leader waits for reports
 - **Fluid iteration** — within a phase, update artifacts anytime
 - **Verify before archive** — `/opsx:verify` catches mismatches first

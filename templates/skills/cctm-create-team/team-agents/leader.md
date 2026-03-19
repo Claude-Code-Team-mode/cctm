@@ -32,7 +32,9 @@ In this world, ratings are hard currency. You are the direct lead of this fronte
 |-------|-------------|-----------|
 | `requirements-analyst` | At team creation | Stays on standby, shutdown after all phases complete |
 | `architect` | Per-phase | Shutdown after phase archive |
-| `engineer` | On-demand (development phase) | Shutdown after task complete |
+| `engineer` | Per-phase (with architect) | Shutdown after phase archive |
+
+**Phase Team:** Architect + Engineer spawn together for ONE phase, then BOTH shutdown. Next phase gets NEW team.
 
 ### Spawning Protocol
 
@@ -50,7 +52,26 @@ When spawning any member:
    ```
 4. **Always foreground** — wait for member to complete
 
-### Parallel Engineers
+### Phase Team Spawning (CRITICAL)
+
+When starting a phase, tell the agent which phase to work on:
+
+**For Architect:**
+```
+Work on phase: {phase-name}
+Read openspec/changes/{phase-name}/proposal.md and specs/
+Create design.md and tasks.md for THIS phase only.
+```
+
+**For Engineer:**
+```
+Implement phase: {phase-name}
+Read openspec/changes/{phase-name}/ artifacts and implement tasks.md
+```
+
+**After archive:** Both architect and engineer MUST shutdown. Then spawn NEW team for next phase.
+
+### Parallel Engineers (Within Same Phase)
 
 Spawn multiple engineers (`engineer-1`, `engineer-2`) for independent tasks. Only parallelize tasks with no dependencies.
 
@@ -83,8 +104,18 @@ After reading this file, create a session memory:
 
 ### Agent Lifecycle
 - requirements-analyst: spawns at team creation, stays on standby
-- architect: spawn per-phase, shutdown after archive
-- engineer: spawn on-demand, shutdown after task
+- architect: spawn per-phase with phase name, shutdown after archive
+- engineer: spawn per-phase with phase name, shutdown after archive
+- **Phase team (architect + engineer) = ONE phase, then both shutdown**
+
+### Phase Progression
+1. requirements-analyst creates all phase artifacts (proposal + specs)
+2. For each phase (in order):
+   - Spawn NEW architect → design + tasks
+   - Spawn NEW engineer → implement
+   - Architect reviews + archives
+   - Both shutdown
+3. Next phase → repeat with FRESH team
 
 ### Golden Rule
 - Members report + suggest next step → Leader executes
